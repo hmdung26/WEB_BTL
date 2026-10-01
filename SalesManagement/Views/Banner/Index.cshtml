@@ -1,0 +1,65 @@
+@model IEnumerable<Banner>
+@{
+    ViewData["Title"] = "Quản lý banner";
+    Layout = "_AdminLayout";
+}
+
+<h1 class="mb-3">Quản lý banner</h1>
+
+@if (TempData["StatusMessage"] is string message)
+{
+    <div class="alert alert-success">@message</div>
+}
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-success">+ Thêm banner</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ảnh</th>
+            <th>Tiêu đề</th>
+            <th>Thứ tự</th>
+            <th>Trạng thái</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var banner in Model)
+        {
+            <tr>
+                <td>@banner.Id</td>
+                <td>
+                    @if (!string.IsNullOrWhiteSpace(banner.ImageUrl))
+                    {
+                        <img src="@banner.ImageUrl" style="height:40px;max-width:120px;object-fit:cover;" />
+                    }
+                </td>
+                <td>@banner.Title</td>
+                <td>@banner.SortOrder</td>
+                <td>
+                    @if (banner.Active)
+                    {
+                        <span class="badge bg-success">Đang bật</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Tắt</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@banner.Id" class="btn btn-sm btn-outline-primary">Sửa</a>
+                    <form asp-action="Delete" asp-route-id="@banner.Id" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Xóa banner này?')">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

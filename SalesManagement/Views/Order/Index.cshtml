@@ -1,0 +1,70 @@
+@model IEnumerable<SalesOrder>
+@using SalesManagement.Models.Enums
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+    Layout = "_AdminLayout";
+}
+
+<h1 class="mb-4">Quản lý đơn hàng</h1>
+
+@if (TempData["StatusMessage"] is string message)
+{
+    <div class="alert alert-success">@message</div>
+}
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Mã đơn</th>
+            <th>Khách hàng</th>
+            <th>Ngày đặt</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Cập nhật trạng thái</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>#@order.Id</td>
+                <td>@(order.User?.FullName ?? order.CustomerName)</td>
+                <td>@order.CreatedAt.ToString("dd/MM/yyyy")</td>
+                <td>@order.TotalAmount.ToString("N0") đ</td>
+                <td>
+                    @switch (order.Status)
+                    {
+                        case OrderStatus.Pending:
+                            <span class="badge bg-secondary">Chờ xử lý</span>
+                            break;
+                        case OrderStatus.Processing:
+                            <span class="badge bg-info">Đang xử lý</span>
+                            break;
+                        case OrderStatus.Shipped:
+                            <span class="badge bg-primary">Đang giao</span>
+                            break;
+                        case OrderStatus.Delivered:
+                            <span class="badge bg-success">Đã giao</span>
+                            break;
+                        case OrderStatus.Cancelled:
+                            <span class="badge bg-danger">Đã hủy</span>
+                            break;
+                    }
+                </td>
+                <td>
+                    <form asp-action="UpdateStatus" method="post" class="d-flex gap-1">
+                        <input type="hidden" name="id" value="@order.Id" />
+                        <select name="status" class="form-select form-select-sm" style="max-width:140px;">
+                            @foreach (var s in Enum.GetValues<OrderStatus>())
+                            {
+                                <option value="@s" selected="@(s == order.Status)">@s</option>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Cập nhật</button>
+                    </form>
+                    <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-link">Chi tiết</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

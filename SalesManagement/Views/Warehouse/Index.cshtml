@@ -1,0 +1,118 @@
+@model WarehouseListViewModel
+@using SalesManagement.Models.Enums
+@{
+    ViewData["Title"] = "Quản lý kho";
+    Layout = "_AdminLayout";
+}
+
+<h1 class="mb-4">Quản lý kho</h1>
+
+@if (TempData["StatusMessage"] is string message)
+{
+    <div class="alert alert-success">@message</div>
+}
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Sản phẩm</label>
+                <select name="productId" class="form-select" asp-items="Model.ProductOptions">
+                    <option value="">Tất cả</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Trạng thái</label>
+                <select name="status" class="form-select">
+                    <option value="">Tất cả</option>
+                    @foreach (var s in Enum.GetValues<WarehouseItemStatus>())
+                    {
+                        <option value="@s" selected="@(Model.Status == s.ToString())">@s</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Tìm kiếm</label>
+                <input name="keyword" value="@Model.Keyword" class="form-control" placeholder="Serial, barcode, kệ..." />
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Lọc</button>
+            </div>
+            <div class="col-md-2 text-end">
+                <a asp-action="Create" class="btn btn-success w-100">+ Nhập hàng</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<p class="text-muted">Hiển thị @Model.TotalCount đơn vị hàng.</p>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Serial</th>
+            <th>Barcode</th>
+            <th>Sản phẩm</th>
+            <th>Kệ</th>
+            <th>Trạng thái</th>
+            <th>Đơn hàng</th>
+            <th>Cập nhật</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.SerialNumber</td>
+                <td>@item.Barcode</td>
+                <td>@item.Product.Name</td>
+                <td>@(item.ShelfLocation ?? "—")</td>
+                <td>
+                    @switch (item.Status)
+                    {
+                        case WarehouseItemStatus.Available:
+                            <span class="badge bg-success">Sẵn sàng</span>
+                            break;
+                        case WarehouseItemStatus.Reserved:
+                            <span class="badge bg-info">Đã giữ chỗ</span>
+                            break;
+                        case WarehouseItemStatus.Sold:
+                            <span class="badge bg-secondary">Đã bán</span>
+                            break;
+                        case WarehouseItemStatus.Damaged:
+                            <span class="badge bg-danger">Hỏng</span>
+                            break;
+                        case WarehouseItemStatus.Warranty:
+                            <span class="badge bg-warning text-dark">Bảo hành</span>
+                            break;
+                    }
+                </td>
+                <td>@(item.OrderId.HasValue ? $"#{item.OrderId}" : "—")</td>
+                <td>
+                    <form asp-action="UpdateStatus" method="post" class="d-flex gap-1">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <select name="status" class="form-select form-select-sm" style="max-width:120px;">
+                            @foreach (var s in Enum.GetValues<WarehouseItemStatus>())
+                            {
+                                <option value="@s" selected="@(s == item.Status)">@s</option>
+                            }
+                        </select>
+                        <input type="text" name="shelfLocation" value="@item.ShelfLocation" class="form-control form-control-sm" style="max-width:90px;" placeholder="Kệ" />
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Lưu</button>
+                    </form>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Sửa</a>
+                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Xóa đơn vị hàng này?')">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,21 @@
+@{
+    ViewData["Title"] = "Báo cáo AI";
+    Layout = "_AdminLayout";
+}
+
+<h1 class="mb-4">Báo cáo AI</h1>
+
+<div class="card">
+    <div class="card-header">Báo cáo tự động từ số liệu kinh doanh</div>
+    <div class="card-body">
+        @if (ViewBag.Report is string report)
+        {
+            <div style="white-space:pre-wrap;">@report</div>
+        }
+        else
+        {
+            <p class="text-muted">Chưa có báo cáo.</p>
+        }
+        <a asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-primary mt-3">Xem dashboard</a>
+    </div>
+</div>

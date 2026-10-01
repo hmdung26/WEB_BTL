@@ -1,0 +1,46 @@
+@model IEnumerable<Notification>
+@{
+    ViewData["Title"] = "Thông báo";
+}
+
+<h1 class="mb-3">Thông báo</h1>
+
+@if (TempData["StatusMessage"] is string message)
+{
+    <div class="alert alert-success">@message</div>
+}
+
+@if (Model.Any())
+{
+    <div class="mb-3">
+        <form asp-action="MarkAllRead" method="post" class="d-inline">
+            <button type="submit" class="btn btn-sm btn-outline-secondary">Đánh dấu tất cả đã đọc</button>
+        </form>
+    </div>
+}
+
+<ul class="list-group">
+    @foreach (var n in Model)
+    {
+        <li class="list-group-item @(n.Read ? "" : "list-group-item-primary")">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h6 class="mb-1">@n.Title</h6>
+                    <p class="mb-1 text-muted">@n.Message</p>
+                    <small class="text-muted">@n.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small>
+                </div>
+                @if (!n.Read)
+                {
+                    <form asp-action="MarkRead" asp-route-id="@n.Id" method="post" class="ms-2">
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Đã đọc</button>
+                    </form>
+                }
+            </div>
+        </li>
+    }
+</ul>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">Bạn chưa có thông báo nào.</p>
+}

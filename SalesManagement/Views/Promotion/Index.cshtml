@@ -1,0 +1,73 @@
+@model IEnumerable<Promotion>
+@{
+    ViewData["Title"] = "Quản lý mã giảm giá";
+    Layout = "_AdminLayout";
+}
+
+<h1 class="mb-3">Quản lý mã giảm giá</h1>
+
+@if (TempData["StatusMessage"] is string message)
+{
+    <div class="alert alert-success">@message</div>
+}
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-success">+ Thêm mã giảm giá</a>
+</p>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Mã</th>
+            <th>Tên</th>
+            <th>Giảm giá</th>
+            <th>Đơn tối thiểu</th>
+            <th>Hiệu lực</th>
+            <th>Đã dùng</th>
+            <th>Trạng thái</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var promo in Model)
+        {
+            <tr>
+                <td><strong>@promo.Code</strong></td>
+                <td>@promo.Name</td>
+                <td>
+                    @if (promo.DiscountType == SalesManagement.Models.Enums.PromotionDiscountType.Percent)
+                    {
+                        <span>@promo.DiscountValue.ToString("N0")%</span>
+                    }
+                    else
+                    {
+                        <span>@promo.DiscountValue.ToString("N0") đ</span>
+                    }
+                </td>
+                <td>@promo.MinOrderValue.ToString("N0") đ</td>
+                <td>@promo.StartAt.ToString("dd/MM/yyyy") - @promo.EndAt.ToString("dd/MM/yyyy")</td>
+                <td>@promo.UsedCount / @(promo.UsageLimit == 0 ? "∞" : promo.UsageLimit.ToString())</td>
+                <td>
+                    @if (promo.Active)
+                    {
+                        <span class="badge bg-success">Kích hoạt</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Tắt</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@promo.Id" class="btn btn-sm btn-outline-primary">Sửa</a>
+                    <form asp-action="Delete" asp-route-id="@promo.Id" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Xóa mã giảm giá này?')">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

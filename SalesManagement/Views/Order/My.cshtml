@@ -1,0 +1,76 @@
+@model IEnumerable<SalesOrder>
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+}
+
+<h1 class="mb-4">Đơn hàng của tôi</h1>
+
+@if (TempData["StatusMessage"] is string message)
+{
+    <div class="alert alert-success">@message</div>
+}
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+@if (!Model.Any())
+{
+    <p class="text-muted">Bạn chưa có đơn hàng nào.</p>
+    <a asp-controller="Product" asp-action="Index" class="btn btn-primary">Mua sắm ngay</a>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Mã đơn</th>
+                <th>Ngày đặt</th>
+                <th>Số lượng</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>#@order.Id</td>
+                    <td>@order.CreatedAt.ToString("dd/MM/yyyy")</td>
+                    <td>@order.OrderItems.Sum(i => i.Quantity)</td>
+                    <td>@order.TotalAmount.ToString("N0") đ</td>
+                    <td>
+                        @switch (order.Status)
+                        {
+                            case SalesManagement.Models.Enums.OrderStatus.Pending:
+                                <span class="badge bg-secondary">Chờ xử lý</span>
+                                break;
+                            case SalesManagement.Models.Enums.OrderStatus.Processing:
+                                <span class="badge bg-info">Đang xử lý</span>
+                                break;
+                            case SalesManagement.Models.Enums.OrderStatus.Shipped:
+                                <span class="badge bg-primary">Đang giao</span>
+                                break;
+                            case SalesManagement.Models.Enums.OrderStatus.Delivered:
+                                <span class="badge bg-success">Đã giao</span>
+                                break;
+                            case SalesManagement.Models.Enums.OrderStatus.Cancelled:
+                                <span class="badge bg-danger">Đã hủy</span>
+                                break;
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">Chi tiết</a>
+                        @if (order.Status == SalesManagement.Models.Enums.OrderStatus.Pending)
+                        {
+                            <form asp-action="Cancel" asp-route-id="@order.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Hủy đơn hàng này?')">Hủy</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

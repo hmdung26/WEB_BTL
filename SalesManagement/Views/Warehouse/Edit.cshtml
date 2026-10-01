@@ -1,0 +1,44 @@
+@model WarehouseFormViewModel
+@using SalesManagement.Models.Enums
+@{
+    ViewData["Title"] = "Sửa đơn vị hàng";
+    Layout = "_AdminLayout";
+}
+
+<h1 class="mb-4">Sửa đơn vị hàng</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label asp-for="ProductId" class="form-label"></label>
+        <select asp-for="ProductId" class="form-select" asp-items="Model.ProductOptions"></select>
+        <span asp-validation-for="ProductId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Barcode" class="form-label"></label>
+        <input asp-for="Barcode" class="form-control" />
+        <span asp-validation-for="Barcode" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="SerialNumber" class="form-label"></label>
+        <input asp-for="SerialNumber" class="form-control" />
+        <span asp-validation-for="SerialNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ShelfLocation" class="form-label"></label>
+        <input asp-for="ShelfLocation" class="form-control" />
+        <span asp-validation-for="ShelfLocation" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<WarehouseItemStatus>()"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Lưu</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

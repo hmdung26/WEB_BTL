@@ -1,0 +1,66 @@
+@model PromotionFormViewModel
+@{
+    ViewData["Title"] = "Sửa mã giảm giá";
+    Layout = "_AdminLayout";
+}
+
+<h1 class="mb-4">Sửa mã giảm giá</h1>
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Code" class="form-label"></label>
+                <input asp-for="Code" class="form-control" />
+                <span asp-validation-for="Code" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="DiscountType" class="form-label"></label>
+                <select asp-for="DiscountType" class="form-select" asp-items="Html.GetEnumSelectList<SalesManagement.Models.Enums.PromotionDiscountType>()"></select>
+            </div>
+            <div class="mb-3">
+                <label asp-for="DiscountValue" class="form-label"></label>
+                <input asp-for="DiscountValue" class="form-control" />
+                <span asp-validation-for="DiscountValue" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="MinOrderValue" class="form-label"></label>
+                <input asp-for="MinOrderValue" class="form-control" />
+                <span asp-validation-for="MinOrderValue" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="StartAt" class="form-label"></label>
+                <input asp-for="StartAt" type="date" class="form-control" />
+                <span asp-validation-for="StartAt" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="EndAt" class="form-label"></label>
+                <input asp-for="EndAt" type="date" class="form-control" />
+                <span asp-validation-for="EndAt" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="UsageLimit" class="form-label"></label>
+                <input asp-for="UsageLimit" class="form-control" />
+                <span asp-validation-for="UsageLimit" class="text-danger"></span>
+            </div>
+            <div class="mb-3 form-check">
+                <input asp-for="Active" class="form-check-input" />
+                <label asp-for="Active" class="form-check-label"></label>
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Lưu</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,53 @@
+@model IEnumerable<Warranty>
+@using SalesManagement.Models.Enums
+@{
+    ViewData["Title"] = "Quản lý bảo hành";
+    Layout = "_AdminLayout";
+}
+
+<h1 class="mb-4">Quản lý bảo hành</h1>
+
+@if (TempData["StatusMessage"] is string message)
+{
+    <div class="alert alert-success">@message</div>
+}
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Serial</th>
+            <th>Sản phẩm</th>
+            <th>Khách hàng</th>
+            <th>Thời hạn</th>
+            <th>Trạng thái</th>
+            <th>Cập nhật trạng thái</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var w in Model)
+        {
+            <tr>
+                <td>@w.SerialNumber</td>
+                <td>@(w.WarehouseItem?.Product.Name ?? "—")</td>
+                <td>@(w.User?.FullName ?? w.User?.Email ?? "—")</td>
+                <td>@w.StartDate.ToString("dd/MM/yyyy") - @w.EndDate.ToString("dd/MM/yyyy")</td>
+                <td>
+                    <span class="badge bg-info">@w.Status</span>
+                </td>
+                <td>
+                    <form asp-action="UpdateStatus" method="post" class="d-flex gap-1">
+                        <input type="hidden" name="id" value="@w.Id" />
+                        <select name="status" class="form-select form-select-sm" style="max-width:130px;">
+                            @foreach (var s in Enum.GetValues<WarrantyStatus>())
+                            {
+                                <option value="@s" selected="@(s == w.Status)">@s</option>
+                            }
+                        </select>
+                        <input type="text" name="note" class="form-control form-control-sm" style="max-width:150px;" placeholder="Ghi chú" />
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Lưu</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

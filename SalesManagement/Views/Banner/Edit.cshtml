@@ -1,0 +1,46 @@
+@model BannerFormViewModel
+@{
+    ViewData["Title"] = "Sửa banner";
+    Layout = "_AdminLayout";
+}
+
+<h1 class="mb-4">Sửa banner</h1>
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Subtitle" class="form-label"></label>
+        <input asp-for="Subtitle" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="ImageUrl" class="form-label"></label>
+        <input asp-for="ImageUrl" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="ImageFile" class="form-label"></label>
+        <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="LinkUrl" class="form-label"></label>
+        <input asp-for="LinkUrl" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="SortOrder" class="form-label"></label>
+        <input asp-for="SortOrder" class="form-control" />
+    </div>
+    <div class="mb-3 form-check">
+        <input asp-for="Active" class="form-check-input" />
+        <label asp-for="Active" class="form-check-label"></label>
+    </div>
+    <button type="submit" class="btn btn-primary">Lưu</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,44 @@
+@model AiChatViewModel
+@{
+    ViewData["Title"] = "Trợ lý AI";
+}
+
+<h1 class="mb-4">Trợ lý tư vấn sản phẩm</h1>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form asp-action="Chat" method="post">
+            <div class="mb-3">
+                <label asp-for="Question" class="form-label">Hỏi về sản phẩm</label>
+                <input asp-for="Question" class="form-control" placeholder="Ví dụ: Tôi cần một điện thoại chụp ảnh đẹp dưới 20 triệu..." />
+                <span asp-validation-for="Question" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Gửi câu hỏi</button>
+        </form>
+    </div>
+</div>
+
+@if (Model.Messages.Count > 0)
+{
+    foreach (var msg in Model.Messages)
+    {
+        if (msg.Role == "user")
+        {
+            <div class="d-flex justify-content-end mb-3">
+                <div class="bg-primary text-white rounded p-3" style="max-width:70%;">
+                    <div class="small mb-1 fw-bold">Bạn</div>
+                    @msg.Text
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex justify-content-start mb-3">
+                <div class="bg-light border rounded p-3" style="max-width:70%;">
+                    <div class="small mb-1 fw-bold text-muted">Trợ lý AI</div>
+                    <div style="white-space:pre-wrap;">@msg.Text</div>
+                </div>
+            </div>
+        }
+    }
+}

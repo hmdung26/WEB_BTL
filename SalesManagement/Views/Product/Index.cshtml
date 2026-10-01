@@ -1,0 +1,119 @@
+@model ProductListViewModel
+@{
+    ViewData["Title"] = "Sản phẩm";
+}
+
+<h1 class="mb-4">Sản phẩm</h1>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Từ khóa</label>
+                <input name="Keyword" value="@Model.Filter.Keyword" class="form-control" placeholder="Tìm kiếm..." />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Danh mục</label>
+                <select name="CategoryId" class="form-select" asp-items="Model.CategoryOptions">
+                    <option value="">Tất cả</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Thương hiệu</label>
+                <select name="BrandId" class="form-select" asp-items="Model.BrandOptions">
+                    <option value="">Tất cả</option>
+                </select>
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">Giá từ</label>
+                <input name="MinPrice" value="@Model.Filter.MinPrice" type="number" min="0" class="form-control" />
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">Giá đến</label>
+                <input name="MaxPrice" value="@Model.Filter.MaxPrice" type="number" min="0" class="form-control" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Sắp xếp</label>
+                <select name="Sort" class="form-select">
+                    <option value="newest" selected="@(Model.Filter.Sort == "newest")">Mới nhất</option>
+                    <option value="price_asc" selected="@(Model.Filter.Sort == "price_asc")">Giá tăng dần</option>
+                    <option value="price_desc" selected="@(Model.Filter.Sort == "price_desc")">Giá giảm dần</option>
+                    <option value="name" selected="@(Model.Filter.Sort == "name")">Tên A-Z</option>
+                </select>
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary w-100">Lọc</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (User.IsInRole("Admin"))
+{
+    <div class="mb-3">
+        <a asp-action="Create" class="btn btn-success">+ Thêm sản phẩm</a>
+    </div>
+}
+
+<p class="text-muted">Tìm thấy @Model.TotalCount sản phẩm.</p>
+
+<div class="row">
+    @foreach (var product in Model.Items)
+    {
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
+                {
+                    <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name" style="height:180px;object-fit:cover;" />
+                }
+                else
+                {
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:180px;">
+                        <span class="text-muted">Không có ảnh</span>
+                    </div>
+                }
+                <div class="card-body">
+                    <h5 class="card-title">@product.Name</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">@product.BrandName</h6>
+                    <p class="card-text fw-bold text-danger">@product.Price.ToString("N0") đ</p>
+                    <p class="mb-1">
+                        <span class="text-warning">@string.Concat(Enumerable.Repeat("★", (int)Math.Round(product.AverageRating)))</span>
+                        <small class="text-muted">(@product.ReviewCount đánh giá)</small>
+                    </p>
+                    <p class="mb-2">
+                        @if (product.StockQuantity > 0)
+                        {
+                            <span class="badge bg-success">Còn hàng</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Hết hàng</span>
+                        }
+                    </p>
+                    <a asp-action="Details" asp-route-id="@product.Id" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination justify-content-center">
+            @for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.Filter.Page ? "active" : "")">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-keyword="@Model.Filter.Keyword"
+                       asp-route-categoryId="@Model.Filter.CategoryId"
+                       asp-route-brandId="@Model.Filter.BrandId"
+                       asp-route-minPrice="@Model.Filter.MinPrice"
+                       asp-route-maxPrice="@Model.Filter.MaxPrice"
+                       asp-route-sort="@Model.Filter.Sort"
+                       asp-route-page="@i">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

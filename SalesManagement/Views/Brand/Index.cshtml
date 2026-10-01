@@ -1,0 +1,54 @@
+@model IEnumerable<Brand>
+@{
+    ViewData["Title"] = "Quản lý thương hiệu";
+    Layout = "_AdminLayout";
+}
+
+<h1 class="mb-3">Quản lý thương hiệu</h1>
+
+@if (TempData["StatusMessage"] is string message)
+{
+    <div class="alert alert-success">@message</div>
+}
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-success">+ Thêm thương hiệu</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Logo</th>
+            <th>Tên</th>
+            <th>Mô tả</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var brand in Model)
+        {
+            <tr>
+                <td>@brand.Id</td>
+                <td>
+                    @if (!string.IsNullOrWhiteSpace(brand.LogoUrl))
+                    {
+                        <img src="@brand.LogoUrl" style="height:30px;" />
+                    }
+                </td>
+                <td>@brand.Name</td>
+                <td>@brand.Description</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@brand.Id" class="btn btn-sm btn-outline-primary">Sửa</a>
+                    <form asp-action="Delete" asp-route-id="@brand.Id" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Xóa thương hiệu này?')">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,61 @@
+@model CheckoutViewModel
+@{
+    ViewData["Title"] = "Đặt hàng";
+}
+
+<h1 class="mb-4">Đặt hàng</h1>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form asp-action="Checkout" method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Thông tin giao hàng</h5>
+            <div class="mb-3">
+                <label asp-for="CustomerName" class="form-label"></label>
+                <input asp-for="CustomerName" class="form-control" />
+                <span asp-validation-for="CustomerName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="CustomerPhone" class="form-label"></label>
+                <input asp-for="CustomerPhone" class="form-control" />
+                <span asp-validation-for="CustomerPhone" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="CustomerAddress" class="form-label"></label>
+                <textarea asp-for="CustomerAddress" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="CustomerAddress" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h5>Đơn hàng của bạn</h5>
+            <table class="table table-sm">
+                <thead>
+                    <tr><th>Sản phẩm</th><th>SL</th><th>Thành tiền</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Cart.Items)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.SubTotal.ToString("N0") đ</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <p>Tạm tính: <strong>@Model.Cart.SubTotal.ToString("N0") đ</strong></p>
+            @if (Model.Cart.PromoApplied)
+            {
+                <p class="text-success">Giảm giá (@Model.Cart.PromoCode): <strong>-@Model.Cart.DiscountAmount.ToString("N0") đ</strong></p>
+            }
+            <h4>Tổng cộng: <span class="text-danger">@Model.Cart.Total.ToString("N0") đ</span></h4>
+            <button type="submit" class="btn btn-primary w-100">Xác nhận đặt hàng</button>
+            <a asp-controller="Cart" asp-action="Index" class="btn btn-link w-100">Quay lại giỏ hàng</a>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

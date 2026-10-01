@@ -1,0 +1,31 @@
+@{
+    ViewData["Title"] = "Tải ảnh lên";
+    Layout = "_AdminLayout";
+}
+
+<h1 class="mb-4">Tải ảnh lên</h1>
+
+@if (TempData["StatusMessage"] is string message)
+{
+    <div class="alert alert-success">@message</div>
+}
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Index" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">Chọn ảnh (jpg, png, gif, webp, bmp — tối đa 5MB)</label>
+                <input type="file" name="file" class="form-control" accept="image/*" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Thư mục con (mặc định: general)</label>
+                <input type="text" name="subFolder" class="form-control" placeholder="general" value="general" />
+            </div>
+            <button type="submit" class="btn btn-primary">Tải lên</button>
+        </form>
+    </div>
+</div>

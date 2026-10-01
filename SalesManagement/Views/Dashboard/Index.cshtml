@@ -1,0 +1,153 @@
+@model DashboardViewModel
+@using SalesManagement.Models.Enums
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_AdminLayout";
+
+    var maxRevenue = Model.MonthlyRevenue.Count > 0 ? Model.MonthlyRevenue.Max(m => m.Revenue) : 0m;
+    if (maxRevenue <= 0m) { maxRevenue = 1m; }
+    const int chartHeight = 220;
+}
+
+<h1 class="mb-4">Dashboard</h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small">Tổng doanh thu</div>
+                <div class="fs-4 fw-bold">@Model.TotalRevenue.ToString("N0") đ</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small">Đơn hàng</div>
+                <div class="fs-4 fw-bold">@Model.TotalOrders</div>
+                <div class="small text-muted">@Model.PendingOrders đang chờ xử lý</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small">Sản phẩm</div>
+                <div class="fs-4 fw-bold">@Model.TotalProducts</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small">Người dùng</div>
+                <div class="fs-4 fw-bold">@Model.TotalUsers</div>
+                <div class="small text-muted">Kho: @Model.AvailableWarehouseItems/@Model.TotalWarehouseItems sẵn sàng</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">Doanh thu 12 tháng gần nhất</div>
+            <div class="card-body">
+                <div class="viz-root">
+                    <div class="d-flex align-items-end" style="height:@(chartHeight)px;" aria-hidden="true">
+                        @foreach (var m in Model.MonthlyRevenue)
+                        {
+                            var h = (int)Math.Max(2, Math.Round(m.Revenue / maxRevenue * chartHeight));
+                            <div class="flex-fill d-flex flex-column align-items-center justify-content-end" style="height:100%;" title="Tháng @m.Label: @m.Revenue.ToString("N0") đ (@m.OrderCount đơn)">
+                                <div class="small text-muted" style="font-variant-numeric:tabular-nums;">@m.Revenue.ToString("N0")</div>
+                                <div class="bar" style="height:@(h)px;"></div>
+                            </div>
+                        }
+                    </div>
+                    <div class="d-flex" aria-hidden="true">
+                        @foreach (var m in Model.MonthlyRevenue)
+                        {
+                            <div class="flex-fill text-center small text-muted">@m.Label</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">Bảng số liệu doanh thu</div>
+            <div class="card-body p-0">
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>Tháng</th>
+                            <th class="text-end">Doanh thu</th>
+                            <th class="text-end">Số đơn</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var m in Model.MonthlyRevenue)
+                        {
+                            <tr>
+                                <td>@m.Label</td>
+                                <td class="text-end" style="font-variant-numeric:tabular-nums;">@m.Revenue.ToString("N0") đ</td>
+                                <td class="text-end">@m.OrderCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">Đơn hàng gần đây</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead>
+                        <tr><th>Mã</th><th>Khách</th><th class="text-end">Tổng</th><th>TT</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var o in Model.RecentOrders)
+                        {
+                            <tr>
+                                <td>#@o.Id</td>
+                                <td>@(o.User?.FullName ?? o.CustomerName)</td>
+                                <td class="text-end">@o.TotalAmount.ToString("N0") đ</td>
+                                <td>
+                                    @switch (o.Status)
+                                    {
+                                        case OrderStatus.Pending: <span class="badge bg-secondary">Chờ</span> break;
+                                        case OrderStatus.Processing: <span class="badge bg-info">Đang XL</span> break;
+                                        case OrderStatus.Shipped: <span class="badge bg-primary">Giao</span> break;
+                                        case OrderStatus.Delivered: <span class="badge bg-success">Đã giao</span> break;
+                                        case OrderStatus.Cancelled: <span class="badge bg-danger">Hủy</span> break;
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="p-2">
+                    <a asp-controller="Order" asp-action="Index" class="btn btn-sm btn-outline-primary w-100">Xem tất cả đơn hàng</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .viz-root {
+        color-scheme: light;
+        --series-1: #2a78d6;
+        --text-muted-chart: #898781;
+    }
+    .viz-root .bar {
+        width: 60%;
+        max-width: 40px;
+        min-height: 2px;
+        background: var(--series-1);
+        border-radius: 4px 4px 0 0;
+    }
+</style>
