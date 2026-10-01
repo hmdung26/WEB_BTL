@@ -1,0 +1,47 @@
+# ===== .NET / Visual Studio =====
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+project.lock.json
+project.fragment.lock.json
+
+# NuGet
+*.nupkg
+**/packages/
+
+# Build & publish output
+[Pp]ublish/
+artifacts/
+
+# ===== Test / coverage =====
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+coveragereport/
+
+# ===== IDE / OS =====
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# ===== Secrets & environment =====
+.env
+appsettings.*.local.json
+secrets.json
+*.pfx
+*.pem
+*.key
+
+# ===== Runtime data (không commit dữ liệu thật) =====
+wwwroot/uploads/
+
+# ===== Docker =====
+# (image/tag do docker build tạo, không cần ignore thêm)
