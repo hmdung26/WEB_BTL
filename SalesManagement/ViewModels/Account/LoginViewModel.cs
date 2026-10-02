@@ -4,10 +4,9 @@ namespace SalesManagement.ViewModels;
 
 public class LoginViewModel
 {
-    [Required(ErrorMessage = "Vui lòng nhập email.")]
-    [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
-    [Display(Name = "Email")]
-    public string Email { get; set; } = null!;
+    [Required(ErrorMessage = "Vui lòng nhập tên đăng nhập hoặc email.")]
+    [Display(Name = "Tên đăng nhập hoặc Email")]
+    public string UserNameOrEmail { get; set; } = null!;
 
     [Required(ErrorMessage = "Vui lòng nhập mật khẩu.")]
     [DataType(DataType.Password)]

@@ -81,10 +81,13 @@ public class AccountController : Controller
             return View(model);
         }
 
-        var user = await _userManager.FindByEmailAsync(model.Email);
+        var user = model.UserNameOrEmail.Contains('@')
+            ? await _userManager.FindByEmailAsync(model.UserNameOrEmail)
+            : await _userManager.FindByNameAsync(model.UserNameOrEmail);
+
         if (user is null)
         {
-            ModelState.AddModelError(string.Empty, "Email hoặc mật khẩu không đúng.");
+            ModelState.AddModelError(string.Empty, "Tên đăng nhập, email hoặc mật khẩu không đúng.");
             return View(model);
         }
 
@@ -101,7 +104,7 @@ public class AccountController : Controller
             return RedirectToAction("Index", "Home");
         }
 
-        ModelState.AddModelError(string.Empty, "Email hoặc mật khẩu không đúng.");
+        ModelState.AddModelError(string.Empty, "Tên đăng nhập, email hoặc mật khẩu không đúng.");
         return View(model);
     }
 
