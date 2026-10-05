@@ -7,10 +7,10 @@
 <h1 class="mb-4">Tra cứu bảo hành</h1>
 
 <form asp-action="Lookup" method="post" class="row g-2 align-items-end mb-4">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
     <div class="col-md-6">
         <label asp-for="SerialNumber" class="form-label"></label>
         <input asp-for="SerialNumber" class="form-control" placeholder="Nhập số serial..." />
-        <span asp-validation-for="SerialNumber" class="text-danger"></span>
     </div>
     <div class="col-md-2">
         <button type="submit" class="btn btn-primary w-100">Tra cứu</button>

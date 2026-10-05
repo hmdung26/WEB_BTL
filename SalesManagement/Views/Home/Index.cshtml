@@ -47,7 +47,7 @@
 }
 
 <div class="text-center py-4">
-    <h1 class="display-4">Chào mừng đến với SalesManagement</h1>
+    <h1 class="display-4">Chào mừng đến với T17PC</h1>
     <p class="lead">Hệ thống quản lý bán hàng</p>
 </div>
 
@@ -83,6 +83,16 @@
         {
             <div class="col-md-3 mb-4">
                 <div class="card h-100">
+                    @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
+                    {
+                        <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name" style="height:160px;object-fit:cover;" />
+                    }
+                    else
+                    {
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:160px;">
+                            <span class="text-muted">Không có ảnh</span>
+                        </div>
+                    }
                     <div class="card-body">
                         <h5 class="card-title">@product.Name</h5>
                         <p class="text-warning">@string.Concat(Enumerable.Repeat("★", (int)Math.Round(product.AverageRating)))</p>
