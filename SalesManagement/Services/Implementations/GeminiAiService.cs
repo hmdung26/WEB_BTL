@@ -21,7 +21,7 @@ public class GeminiAiService : IGeminiAiService
         ?? _configuration["Gemini:ApiKey"]
         ?? string.Empty;
 
-    private string Model => _configuration["Gemini:Model"] ?? "gemini-2.0-flash";
+    private string Model => _configuration["Gemini:Model"] ?? "gemini-3.8-flash";
 
     public Task<string> GenerateAsync(string prompt)
     {
